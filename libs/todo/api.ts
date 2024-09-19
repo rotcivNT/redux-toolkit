@@ -25,7 +25,7 @@ export const todoApi = createApi({
         const tempId = `temp-${Date.now()}`;
         const patchResult = dispatch(
           todoApi.util.updateQueryData("getTodos", undefined, (draft) => {
-            draft.unshift({ ...todo, id: tempId });
+            draft.push({ ...todo, id: tempId });
           })
         );
 

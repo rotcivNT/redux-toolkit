@@ -12,7 +12,7 @@ import { useState } from "react";
 import LoadingIndicator from "./Loading";
 
 export default function TodoList() {
-  const { data, isLoading } = useGetTodosQuery();
+  const { data = [], isLoading } = useGetTodosQuery();
 
   const [addTodo] = useAddTodoMutation();
   const [updateTodo] = useUpdateTodoMutation();
@@ -72,71 +72,69 @@ export default function TodoList() {
         ) : (
           <>
             <ul className="space-y-2 max-h-[500px] overflow-auto">
-              {data &&
-                data.map((todo) => (
-                  <li
-                    key={todo.id}
-                    className={`flex items-center bg-gray-50 p-3 rounded-md transition-all duration-300 ${
-                      todo.completed ? "opacity-50" : ""
-                    }`}
-                  >
+              {[...data].reverse().map((todo) => (
+                <li
+                  key={todo.id}
+                  className={`flex items-center bg-gray-50 p-3 rounded-md transition-all duration-300 ${
+                    todo.completed ? "opacity-50" : ""
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={todo.completed}
+                    onChange={(e) =>
+                      onUpdateTodo(todo.id, { completed: e.target.checked })
+                    }
+                    className="mr-3 form-checkbox h-5 w-5 text-purple-500 rounded focus:ring-purple-400"
+                  />
+                  {editingId === todo.id ? (
                     <input
-                      type="checkbox"
-                      checked={todo.completed}
-                      onChange={(e) =>
-                        onUpdateTodo(todo.id, { completed: e.target.checked })
+                      type="text"
+                      value={editText}
+                      onChange={(e) => setEditText(e.target.value)}
+                      onBlur={() => onUpdateTodo(todo.id, { todo: editText })}
+                      onKeyDown={(e) =>
+                        e.key === "Enter" &&
+                        onUpdateTodo(todo.id, { todo: editText })
                       }
-                      className="mr-3 form-checkbox h-5 w-5 text-purple-500 rounded focus:ring-purple-400"
+                      className="flex-grow px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      autoFocus
                     />
-                    {editingId === todo.id ? (
-                      <input
-                        type="text"
-                        value={editText}
-                        onChange={(e) => setEditText(e.target.value)}
-                        onBlur={() => onUpdateTodo(todo.id, { todo: editText })}
-                        onKeyDown={(e) =>
-                          e.key === "Enter" &&
-                          onUpdateTodo(todo.id, { todo: editText })
-                        }
-                        className="flex-grow px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                        autoFocus
-                      />
-                    ) : (
-                      <span
-                        className={`flex-grow ${
-                          todo.completed ? "line-through" : ""
-                        }`}
-                        onDoubleClick={() => startEditing(todo.id, todo.todo)}
-                      >
-                        {todo.todo}
-                      </span>
-                    )}
-                    <button
-                      onClick={() => onDeleteTodo(todo.id)}
-                      className="ml-2 text-red-500 hover:text-red-700 focus:outline-none"
+                  ) : (
+                    <span
+                      className={`flex-grow ${
+                        todo.completed ? "line-through" : ""
+                      }`}
+                      onDoubleClick={() => startEditing(todo.id, todo.todo)}
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </button>
-                  </li>
-                ))}
-            </ul>
-            {!data ||
-              (data.length === 0 && (
-                <p className="text-center text-gray-500 mt-4">
-                  No tasks yet. Add one above!
-                </p>
+                      {todo.todo}
+                    </span>
+                  )}
+                  <button
+                    onClick={() => onDeleteTodo(todo.id)}
+                    className="ml-2 text-red-500 hover:text-red-700 focus:outline-none"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </button>
+                </li>
               ))}
+            </ul>
+            {data.length === 0 && (
+              <p className="text-center text-gray-500 mt-4">
+                No tasks yet. Add one above!
+              </p>
+            )}
           </>
         )}
       </div>
