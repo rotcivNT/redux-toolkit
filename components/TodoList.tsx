@@ -37,7 +37,7 @@ export default function TodoList() {
   };
 
   const onUpdateTodo = async (id: string, updatedFields: Partial<Todo>) => {
-    setEditText("");
+    setEditingId("");
     await updateTodo({ id, updatedFields });
   };
 
