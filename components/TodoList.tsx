@@ -50,6 +50,8 @@ export default function TodoList() {
       <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
         <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
           My Todo List
+          <br />
+          Double click to edit
         </h1>
         <div className="flex mb-4">
           <input
